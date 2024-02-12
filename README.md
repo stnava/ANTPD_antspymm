@@ -22,9 +22,9 @@ the steps include:
 
 3.  run the job `bash src/slurm/00_high_level_batch_call.sh`
 
-    * make the the threads per job variable is what you want for your environment 
+    * make sure the threads per job variable is what you want for your environment 
 
-    * make this that variable matches the nthreads variable in `src/slurm/02_job_script.py`
+    * make sure that variable matches the `nth` variable in `src/slurm/02_job_script.py`
 
         * this would be the script to run on a single subject 
 
