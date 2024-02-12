@@ -52,11 +52,21 @@ cc=dd[,"DTI_mean_fa.body_of_corpus_callosum.jhu_icbm_labels_1mm"]
 mtg=dd[,"T1Hier_thk_left_middle_temporaldktcortex"]
 # inter network correlation
 dfn=dd[,"rsfMRI_fcnxpro122_DefaultB_2_SalVentAttnB"]
+fd=dd[,"rsfMRI_fcnxpro122_FD_mean"]
 plot( cc, mtg )
 cor.test( cc, mtg ) # ~0.74
 plot( cc, dfn )
 cor.test( cc, dfn ) # ~0.26
 plot( mtg, dfn )
 cor.test( mtg, dfn ) # ~0.6
+
+dd$bv = dd$T1Hier_vol_hemisphere_lefthemispheres + dd$T1Hier_vol_hemisphere_righthemispheres
+
+# example joint model
+summary( lm( rsfMRI_fcnxpro122_DefaultB_2_SalVentAttnB ~ 
+    rsfMRI_fcnxpro122_FD_mean+
+    DTI_mean_fa.body_of_corpus_callosum.jhu_icbm_labels_1mm + T1Hier_thk_left_middle_temporaldktcortex , data=dd ) )
+
+
 
 ```
