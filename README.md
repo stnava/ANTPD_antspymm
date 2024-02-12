@@ -8,7 +8,9 @@ provides the basic idea.  it was developed for a slurm cluster - you may
 need to modify things here for your own compute environment. the home 
 directory on the cluster was: `/mnt/cluster/data/ANTPD`.
 
-the steps include:
+NOTE: `ANTPD` MRI appears to have several problems that the data curators are aware of but have not resolved.  Nevertheless, we use the data gratefully because of its availability and potential future relevance when the current (Feb 2024) issues are remedied.
+
+the steps to recreate the processing include:
 
 1.  clone this repo 
 
@@ -30,7 +32,31 @@ the steps include:
 
 4.  when all subjects are done, run `python3 src/agg.py`
 
-    * rejoice in the thousands of useful quantitative neuroimaging variables you easily produced.
+    * rejoice in the thousands of useful quantitative neuroimaging variables you easily produced and merged in a single data frame.
 
-5.  merge the output of step 4 with demographics ( not covered here )
+5.  fuse the output of step 4 with demographics ( not covered here )
 
+example output data is in the `data` directory - including a few of the QC figures that are generated.  these can be viewed via:
+
+```bash
+open `find ./data/antpd_antspymm/ -name "*brain.png"`
+open `find ./data/antpd_antspymm/ -name "*FAbetter.png"`
+open `find ./data/antpd_antspymm/ -name "*DefaultMode.png"`
+```
+
+Look at correlations among inter-modality variables.
+
+```R
+dd=read.csv("data/antpd_antspymm.csv")
+cc=dd[,"DTI_mean_fa.body_of_corpus_callosum.jhu_icbm_labels_1mm"]
+mtg=dd[,"T1Hier_thk_left_middle_temporaldktcortex"]
+# inter network correlation
+dfn=dd[,"rsfMRI_fcnxpro122_DefaultB_2_SalVentAttnB"]
+plot( cc, mtg )
+cor.test( cc, mtg ) # ~0.74
+plot( cc, dfn )
+cor.test( cc, dfn ) # ~0.26
+plot( mtg, dfn )
+cor.test( mtg, dfn ) # ~0.6
+
+```
