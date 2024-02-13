@@ -36,6 +36,10 @@ the steps to recreate the processing include:
 
 5.  fuse the output of step 4 with demographics ( not covered here )
 
+    * use variables from the aggregated data frame such as `subjectID` and `date` to guide this process.
+
+    * take a look at `T1Hier_resnetGrade` and associated `png` images to get a quick look through the data.
+
 example output data is in the `data` directory - including a few of the QC figures that are generated.  these can be viewed via:
 
 ```bash
@@ -60,13 +64,8 @@ cor.test( cc, dfn ) # ~0.26
 plot( mtg, dfn )
 cor.test( mtg, dfn ) # ~0.6
 
+# brain volume
 dd$bv = dd$T1Hier_vol_hemisphere_lefthemispheres + dd$T1Hier_vol_hemisphere_righthemispheres
-
-# example joint model
-summary( lm( rsfMRI_fcnxpro122_DefaultB_2_SalVentAttnB ~ 
-    rsfMRI_fcnxpro122_FD_mean+
-    DTI_mean_fa.body_of_corpus_callosum.jhu_icbm_labels_1mm + T1Hier_thk_left_middle_temporaldktcortex , data=dd ) )
-
-
+dd$bv = dd$bv/mean(dd$bv)
 
 ```
