@@ -69,3 +69,52 @@ dd$bv = dd$T1Hier_vol_hemisphere_lefthemispheres + dd$T1Hier_vol_hemisphere_righ
 dd$bv = dd$bv/mean(dd$bv)
 
 ```
+
+## simlr example
+
+
+```r
+library( ANTsR )
+library( subtyper )
+
+# Define the URL of the raw CSV file
+url <- "https://raw.githubusercontent.com/stnava/ANTPD_antspymm/main/data/antpd_antspymm.csv"
+
+# Read the CSV file into R
+data <- read.csv(url)[,-1]
+
+head(names(data))
+
+datapym = antspymm_predictors( data, TRUE )
+simfile = "/tmp/EXAMPLE"
+if ( ! file.exists( paste0(simfile,'_t1_simlr.csv') ) ) {
+    # could do something else here - this is just based on quality
+    trainer = subtyper::fs(
+        data$T1Hier_resnetGrade > 1.1 ) 
+    print(table(trainer))
+    mysimN = log_parameters(
+        antspymm_simlr,
+        logfile=path.expand(simfile),
+        blaster=datapym,
+        select_training_boolean=trainer, 
+        energy='cca',
+        nsimlr=4,
+        doAsym=2,
+#        sparseness=0.90,
+        covariates=c('T1Hier_resnetGrade '),  # optional confounds
+        exclusions=c("fcnxpro134","fcnxpro129",'mean_md' ,'area','thk'),  # filter some variable types out
+        returnidps=F,
+        verbose=T )
+    write_simlr_data_frames( mysimN$simlrX$v, path.expand(simfile)  )
+}
+
+presim=read_simlr_data_frames( path.expand(simfile), 
+    c("t1","t1a", "dt", "dta", "rsf" ))
+npc = ncol(presim[[1]])
+simproj = apply_simlr_matrices( datapym, presim, robust=FALSE )
+tempcolsOrig = simproj[[2]] # names of the simlr variables
+
+
+```
+
+
