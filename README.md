@@ -108,10 +108,13 @@ if ( ! file.exists( paste0(simfile,'_t1_simlr.csv') ) ) {
     write_simlr_data_frames( mysimN$simlrX$v, path.expand(simfile)  )
 }
 
+measure_types = c("t1","t1a", "dt", "dta", "rsf" ) 
 presim=read_simlr_data_frames( path.expand(simfile), 
-    c("t1","t1a", "dt", "dta", "rsf" ))
+    measure_types )
 npc = ncol(presim[[1]])
-simproj = apply_simlr_matrices( datapym, presim, robust=FALSE )
+simproj = apply_simlr_matrices( datapym, presim,
+   absolute_value = rep( TRUE, length( measure_types ) ),
+   robust=FALSE )
 tempcolsOrig = simproj[[2]] # names of the simlr variables
 
 
