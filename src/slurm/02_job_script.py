@@ -87,13 +87,29 @@ template = ants.crop_image( template, ants.iMath( bxt, "MD", 12 ) )
 
 anatfn = t1fn + '/anat/' + subject_id + "_T1w.nii.gz"
 anatfn = t1fn 
-# note: we explicitly only take the first run here
-dtfn = glob.glob( rootdir + subject_id + "/" + subdate + '/dwi/' + '*dwi.nii.gz' )[0] 
-rsfn = glob.glob( rootdir + subject_id + "/" + subdate + '/func/' + '*rest_bold.nii.gz' )[0]
 
 if not os.path.exists( anatfn ) : # or not os.path.exists( dtfn ) or not os.path.exists( rsfn ):
     print( anatfn + " does not exist : exiting ")
     sys.exit(0)
+
+
+# note: we explicitly only take the first run here
+dwi_pattern = os.path.join(rootdir, subject_id, subdate, 'dwi', '*dwi.nii.gz')
+dwi_files = glob.glob(dwi_pattern)
+
+if dwi_files:
+    dtfn = dwi_files[0]
+else:
+    raise FileNotFoundError(f"No DWI file found for subject {subject_id} on {subdate} in {dwi_pattern}")
+
+func_pattern = os.path.join(rootdir, subject_id, subdate, 'func', '*rest_bold.nii.gz')
+func_files = glob.glob(func_pattern)
+
+if func_files:
+    rsfn = func_files[0]
+else:
+    raise FileNotFoundError(f"No resting-state BOLD file found for subject {subject_id} on {subdate} in {func_pattern}")
+
 
 # generate_mm_dataframe(projectID, subjectID, date, imageUniqueID, modality, source_image_directory, output_image_directory, t1_filename, flair_filename=[], rsf_filenames=[], dti_filenames=[], nm_filenames=[], perf_filename=[])
 
