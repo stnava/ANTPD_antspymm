@@ -124,9 +124,15 @@ tempcolsOrig = simproj[[2]] # names of the simlr variables
 
 ## Docker 
 
+Build the container with the Dockerfile that is included with ANTsPyMM.
 
 ```bash
 docker build --platform=linux/amd64 -t antspymm-test .
 ```
 
+Run the container
+
+```bash
+docker run --platform=linux/amd64 -it -v $(pwd)/data:/workspace/data antspymm-test /bin/bash
+```
 
