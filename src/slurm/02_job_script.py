@@ -55,6 +55,7 @@ if fileindex > len( t1fns ):
     sys.exit(0)
 
 t1fn = t1fns[ fileindex ]
+print("t1fn = " + t1fn)
 import re
 newoutdir = base_directory + 'antpd_antspymm/'
 os.makedirs( newoutdir, exist_ok=True  )
