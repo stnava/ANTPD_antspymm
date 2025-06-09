@@ -28,6 +28,19 @@ print(f"Using rootdir: {rootdir}")
 if not os.path.exists(rootdir):
     print("please fix the rootdir")
     sys.exit(0)
+
+template_path = os.path.expanduser("~/.antspymm/PPMI_template0.nii.gz")
+
+if os.path.exists(template_path):
+    template = ants.image_read(template_path)
+else:
+    # Run fallback code here
+    print("Template file not found. Running fallback procedure...")
+    antspyt1w.get_data(force_download=True)
+    antspymm.get_data(force_download=True)
+
+print("ready for test run")
+
 ######################################################
 # /mnt/cluster/data/ANTPD/bids/sub-RC4107/ses-2/anat/sub-RC4107_ses-2_T1w.nii.gz
 t1fns = glob.glob( rootdir + "*/*/anat/*T1w.nii.gz" )
