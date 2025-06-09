@@ -136,3 +136,17 @@ Run the container
 docker run -it -v $(pwd)/data:/workspace/data antspymm-test /bin/bash
 ```
 
+Within the container, do:
+
+```bash 
+cd ANTPD_antspymm
+git pull
+bash src/download_docker.sh
+python3 src/first_timer.py
+python3 src/slurm/02_job_script.py 3 # run the 3rd subject
+```
+
+this will produce a single example run reproducibly.  
+
+you made need to increase the memory available to your docker container for this to work.
+
