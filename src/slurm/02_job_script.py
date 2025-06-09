@@ -100,17 +100,19 @@ dwi_pattern = os.path.join(rootdir, subject_id, subdate, 'dwi', '*dwi.nii.gz')
 dwi_files = glob.glob(dwi_pattern)
 
 if dwi_files:
-    dtfn = dwi_files[0]
+    dtfn = [dwi_files[0]]
 else:
-    raise FileNotFoundError(f"No DWI file found for subject {subject_id} on {subdate} in {dwi_pattern}")
+    dtfn = []
+#    raise FileNotFoundError(f"No DWI file found for subject {subject_id} on {subdate} in {dwi_pattern}")
 
 func_pattern = os.path.join(rootdir, subject_id, subdate, 'func', '*rest_bold.nii.gz')
 func_files = glob.glob(func_pattern)
 
 if func_files:
-    rsfn = func_files[0]
+    rsfn = [func_files[0]]
 else:
-    raise FileNotFoundError(f"No resting-state BOLD file found for subject {subject_id} on {subdate} in {func_pattern}")
+    rsfn = []
+#    raise FileNotFoundError(f"No resting-state BOLD file found for subject {subject_id} on {subdate} in {func_pattern}")
 
 
 # generate_mm_dataframe(projectID, subjectID, date, imageUniqueID, modality, source_image_directory, output_image_directory, t1_filename, flair_filename=[], rsf_filenames=[], dti_filenames=[], nm_filenames=[], perf_filename=[])
@@ -124,8 +126,8 @@ studycsv = antspymm.generate_mm_dataframe(
         rootdir,
         newoutdir,
         t1_filename = anatfn,
-        dti_filenames = [dtfn],
-        rsf_filenames = [rsfn]
+        dti_filenames = dtfn,
+        rsf_filenames = rsfn
     )
 studycsv.to_csv(base_directory + "studycsvs/" + subject_id + "_" + subdate + ".csv")
 studycsv2 = studycsv.dropna(axis=1)
