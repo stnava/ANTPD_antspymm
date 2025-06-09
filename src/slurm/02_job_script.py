@@ -5,6 +5,7 @@ from os.path import exists
 import glob
 import ants
 import antspyt1w
+import antspymm
 #
 #######################
 # clean tmp # may be needed in context of much larger jobs
