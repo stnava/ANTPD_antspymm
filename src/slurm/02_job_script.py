@@ -16,6 +16,18 @@ import glob
 ####################################################################################
 base_directory = "/mnt/cluster/data/ANTPD/"
 rootdir = base_directory + "bids/"
+
+# Check if the directory exists
+if not os.path.exists(rootdir):
+    # Fallback to alternative path
+    base_directory = "/workspace/data/ANTPD/"
+    rootdir = os.path.join(base_directory, "bids/")
+
+print(f"Using rootdir: {rootdir}")
+
+if not os.path.exists(rootdir):
+    print("please fix the rootdir")
+    sys.exit(0)
 ######################################################
 # /mnt/cluster/data/ANTPD/bids/sub-RC4107/ses-2/anat/sub-RC4107_ses-2_T1w.nii.gz
 t1fns = glob.glob( rootdir + "*/*/anat/*T1w.nii.gz" )
