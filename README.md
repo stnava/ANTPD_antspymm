@@ -142,10 +142,10 @@ Within the container, do:
 cd ANTPD_antspymm
 git pull
 bash src/download_docker.sh
-python3 src/slurm/02_job_script.py 3 # run the 3rd subject
+python3 src/slurm/02_job_script.py 0 # run the 3rd subject
 ```
 
-this will produce a single example run reproducibly.  
+this will produce a single example run reproducibly.  in this example, only subjects with 
+complete data (t1, rsf and dti) will be run.
 
 you made need to increase the memory available to your docker container for this to work.
-
