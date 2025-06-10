@@ -142,7 +142,7 @@ Within the container, do:
 cd ANTPD_antspymm
 git pull
 bash src/download_docker.sh
-python3 src/slurm/02_job_script.py 0 # run the 3rd subject
+python3 src/slurm/02_job_script.py 0 # run the nth subject
 ```
 
 this will produce a single example run reproducibly.
