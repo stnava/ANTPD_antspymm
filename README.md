@@ -140,7 +140,7 @@ Within the container, do:
 
 ```bash 
 cd ANTPD_antspymm
-python3 src/slurm/02_job_script.py 0 # run the nth subject
+python3 src/slurm/02_job_script.py 2 # run the nth subject
 ```
 
 this will produce a single example run reproducibly.

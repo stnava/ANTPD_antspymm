@@ -18,7 +18,7 @@ def download_siq_superres_models(target_dir):
     Downloads the SIQ reference super-resolution models from Figshare
     and extracts them to the target directory.
     """
-    figshare_url = "https://figshare.com/ndownloader/files/45589427"
+    figshare_url = "https://figshare.com/ndownloader/articles/27079987/versions/1"
     target_zip_path = os.path.join(target_dir, "siq_superres_models.zip")
 
     print(f"Downloading SIQ models from {figshare_url} to {target_zip_path}")
