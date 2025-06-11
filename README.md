@@ -124,7 +124,7 @@ tempcolsOrig = simproj[[2]] # names of the simlr variables
 
 ## Docker 
 
-Build the container with the Dockerfile that is included with ANTsPyMM.
+Build the container with the Dockerfile that is included within this repository.
 
 ```bash
 docker build -t antspymm-test .
@@ -140,8 +140,6 @@ Within the container, do:
 
 ```bash 
 cd ANTPD_antspymm
-git pull
-bash src/download_docker.sh
 python3 src/slurm/02_job_script.py 0 # run the nth subject
 ```
 
