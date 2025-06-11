@@ -31,6 +31,26 @@ def download_siq_superres_models(target_dir):
     os.remove(target_zip_path)
     print("SIQ super-resolution models downloaded and extracted.")
 
+def download_pymm():
+    target_dir="~/.antspymm/"
+    figshare_url = "https://ndownloader.figshare.com/articles/14766102/versions/46"
+    target_zip_path = os.path.join(target_dir, "pymm_models.zip")
+    print(f"Downloading PyMM from {figshare_url} to {target_zip_path}")
+    urllib.request.urlretrieve(figshare_url, target_zip_path)
+    print(f"Extracting PyMM models into {target_dir}")
+    with zipfile.ZipFile(target_zip_path, 'r') as zip_ref:
+        zip_ref.extractall(target_dir)
+    os.remove(target_zip_path)
+
+    figshare_url = "https://figshare.com/ndownloader/articles/16912366/versions/25"
+    target_zip_path = os.path.join(target_dir, "pymm_models.zip")
+    print(f"Downloading PyMM from {figshare_url} to {target_zip_path}")
+    urllib.request.urlretrieve(figshare_url, target_zip_path)
+    print(f"Extracting PyMM models into {target_dir}")
+    with zipfile.ZipFile(target_zip_path, 'r') as zip_ref:
+        zip_ref.extractall(target_dir)
+    os.remove(target_zip_path)
+    print("PyMM models downloaded and extracted.")
 
 # -------------------------- MAIN SCRIPT --------------------------
 if (len(sys.argv) == 1):
@@ -59,6 +79,8 @@ if len(sys.argv) > 2:
     do_install = int(sys.argv[2])
 if do_install == 0:
     sys.exit(0)
+
+download_pymm()
 
 # Download SIQ super-resolution models
 download_siq_superres_models(output_dir)
