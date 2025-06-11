@@ -1,6 +1,6 @@
 ####################################################################################
-# ANTPD Processing Script
-# This script prepares and processes multimodal MRI data for the ANTPD project
+# ANTPD Processing Script (No argparse version)
+# Allows user to pass in the root BIDS directory and file index as positional args
 ####################################################################################
 
 import os
@@ -15,42 +15,59 @@ import antspymm
 # ------------------------------------------------------------------------------
 # Environment setup
 # ------------------------------------------------------------------------------
-# Set thread usage for TensorFlow and ITK
 num_threads = '24'
 os.environ["TF_NUM_INTEROP_THREADS"] = num_threads
 os.environ["TF_NUM_INTRAOP_THREADS"] = num_threads
 os.environ["ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS"] = num_threads
 
 # ------------------------------------------------------------------------------
-# Define base data directory, with fallback if needed
+# Command-line argument handling
 # ------------------------------------------------------------------------------
-base_directory = "/mnt/cluster/data/ANTPD/"
-rootdir = os.path.join(base_directory, "bids/")
+# Usage: python script.py [file_index] [optional_rootdir]
 
-if not os.path.exists(rootdir):
-    base_directory = "/workspace/data/ANTPD/"
+# Set default values
+fileindex = 9
+rootdir = None
+
+# Parse command-line arguments
+if len(sys.argv) > 1:
+    try:
+        fileindex = int(sys.argv[1])
+    except ValueError:
+        print("ERROR: First argument must be an integer file index.")
+        sys.exit(1)
+
+if len(sys.argv) > 2:
+    rootdir = os.path.abspath(sys.argv[2])
+    base_directory = os.path.dirname(os.path.dirname(rootdir))  # parent of "bids"
+else:
+    # Fall back to default paths
+    default_base = "/mnt/cluster/data/ANTPD/"
+    fallback_base = "/workspace/data/ANTPD/"
+    if os.path.exists(os.path.join(default_base, "bids/")):
+        base_directory = default_base
+    elif os.path.exists(os.path.join(fallback_base, "bids/")):
+        base_directory = fallback_base
+    else:
+        print("ERROR: No valid default rootdir found. Please pass as second argument.")
+        sys.exit(1)
     rootdir = os.path.join(base_directory, "bids/")
 
 print(f"Using rootdir: {rootdir}")
 
-if not os.path.exists(rootdir):
-    print("ERROR: Could not locate rootdir. Please check path.")
-    sys.exit(1)
-
 # ------------------------------------------------------------------------------
-# Load normalization template or download if missing
+# Load normalization template
 # ------------------------------------------------------------------------------
 template_path = os.path.expanduser("~/.antspymm/PPMI_template0.nii.gz")
 
 if os.path.exists(template_path):
     template = ants.image_read(template_path)
 else:
-    print("Template file not found. Downloading default template...")
+    print("Template not found. Downloading default templates...")
     antspyt1w.get_data(force_download=True)
     antspymm.get_data(force_download=True)
     template = ants.image_read(template_path)
 
-# Apply brain mask and crop
 brain_mask = ants.image_read(os.path.expanduser("~/.antspymm/PPMI_template0_brainmask.nii.gz"))
 template = template * brain_mask
 template = ants.crop_image(template, ants.iMath(brain_mask, "MD", 12))
@@ -58,13 +75,10 @@ template = ants.crop_image(template, ants.iMath(brain_mask, "MD", 12))
 print("Template loaded and processed. Ready for test run.")
 
 # ------------------------------------------------------------------------------
-# Locate all T1-weighted files and select based on input index
+# Locate all T1-weighted files and select by index
 # ------------------------------------------------------------------------------
 t1fns = glob.glob(os.path.join(rootdir, "*", "*", "anat", "*T1w.nii.gz"))
 t1fns.sort()
-
-# Get file index from command line, default to 9
-fileindex = int(sys.argv[1]) if len(sys.argv) > 1 else 9
 
 if fileindex >= len(t1fns):
     print("ERROR: File index out of range.")
