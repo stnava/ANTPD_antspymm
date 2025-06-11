@@ -43,7 +43,8 @@ RUN pip3 --no-cache-dir install --upgrade awscli
 #
 RUN git clone https://github.com/stnava/ANTPD_antspymm.git /workspace/ANTPD_antspymm
 RUN python /workspace/ANTPD_antspymm/src/get_antsxnet_data.py /workspace/.keras
-#
+RUN bash /workspace/ANTPD_antspymm/src/download_docker.sh
+# data is in /workspace/.keras/
 # Default command
 CMD ["bash"]
 
