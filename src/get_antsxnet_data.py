@@ -31,26 +31,37 @@ def download_siq_superres_models(target_dir):
     os.remove(target_zip_path)
     print("SIQ super-resolution models downloaded and extracted.")
 
-def download_pymm():
-    target_dir="~/.antspymm/"
-    figshare_url = "https://ndownloader.figshare.com/articles/14766102/versions/46"
-    target_zip_path = os.path.join(target_dir, "pymm_models.zip")
-    print(f"Downloading PyMM from {figshare_url} to {target_zip_path}")
-    urllib.request.urlretrieve(figshare_url, target_zip_path)
-    print(f"Extracting PyMM models into {target_dir}")
-    with zipfile.ZipFile(target_zip_path, 'r') as zip_ref:
-        zip_ref.extractall(target_dir)
-    os.remove(target_zip_path)
 
-    figshare_url = "https://figshare.com/ndownloader/articles/16912366/versions/25"
-    target_zip_path = os.path.join(target_dir, "pymm_models.zip")
-    print(f"Downloading PyMM from {figshare_url} to {target_zip_path}")
-    urllib.request.urlretrieve(figshare_url, target_zip_path)
-    print(f"Extracting PyMM models into {target_dir}")
-    with zipfile.ZipFile(target_zip_path, 'r') as zip_ref:
-        zip_ref.extractall(target_dir)
-    os.remove(target_zip_path)
-    print("PyMM models downloaded and extracted.")
+import os
+import urllib.request
+import zipfile
+
+def download_pymm():
+    import pathlib
+
+    target_dir = os.path.expanduser("~/.antspymm/")
+    os.makedirs(target_dir, exist_ok=True)
+
+    figshare_urls = [
+        "https://ndownloader.figshare.com/articles/14766102/versions/46",
+        "https://figshare.com/ndownloader/articles/16912366/versions/25"
+    ]
+
+    for i, url in enumerate(figshare_urls, start=1):
+        zip_filename = f"pymm_models_{i}.zip"
+        target_zip_path = os.path.join(target_dir, zip_filename)
+
+        print(f"Downloading PyMM from {url} to {target_zip_path}")
+        urllib.request.urlretrieve(url, target_zip_path)
+
+        print(f"Extracting PyMM models into {target_dir}")
+        with zipfile.ZipFile(target_zip_path, 'r') as zip_ref:
+            zip_ref.extractall(target_dir)
+
+        os.remove(target_zip_path)
+
+    print("✅ PyMM models downloaded and extracted.")
+
 
 # -------------------------- MAIN SCRIPT --------------------------
 if (len(sys.argv) == 1):
