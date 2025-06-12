@@ -1,5 +1,7 @@
 FROM tensorflow/tensorflow:2.17.0
 
+ENV HOME=/workspace
+WORKDIR $HOME
 
 # Set environment variables for optimal threading
 ENV TF_NUM_INTEROP_THREADS=8 \
@@ -7,9 +9,6 @@ ENV TF_NUM_INTEROP_THREADS=8 \
     ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8 \
     OPENBLAS_NUM_THREADS=8 \
     MKL_NUM_THREADS=8
-
-# Set working directory
-WORKDIR /workspace
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -41,10 +40,10 @@ RUN pip install --upgrade pip \
 RUN pip3 --no-cache-dir install --upgrade awscli
 ###########
 #
-RUN git clone https://github.com/stnava/ANTPD_antspymm.git /workspace/ANTPD_antspymm
-RUN python /workspace/ANTPD_antspymm/src/get_antsxnet_data.py /root/.keras
-RUN cd /workspace/ANTPD_antspymm && bash src/download_docker.sh
-# data is in /workspace/.keras/, ~/.antspymm and bids folders
+RUN git clone https://github.com/stnava/ANTPD_antspymm.git ${HOME}/ANTPD_antspymm
+RUN python ${HOME}/ANTPD_antspymm/src/get_antsxnet_data.py ${HOME}/.keras
+RUN cd ${HOME}/ANTPD_antspymm && bash src/download_docker.sh
+# data is in ${HOME}/.keras/, ~/.antspymm and bids folders
 # Default command
 CMD ["bash"]
 
