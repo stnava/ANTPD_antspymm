@@ -146,3 +146,13 @@ python3 src/slurm/02_job_script.py 2 # run the nth subject
 this will produce a single example run reproducibly.
 
 you made need to increase the memory available to your docker container for this to work.
+
+
+
+all together now
+
+```bash
+docker run -it -v $(pwd)/data:/workspace/data antspymm-test /bin/bash
+cd ANTPD_antspymm
+python3 src/slurm/02_job_script.py 12 # run the nth subject
+```

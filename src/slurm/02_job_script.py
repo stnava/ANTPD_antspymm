@@ -43,7 +43,7 @@ if len(sys.argv) > 2:
 else:
     # Fall back to default paths
     default_base = "/mnt/cluster/data/ANTPD/"
-    fallback_base = "/workspace/data/ANTPD/"
+    fallback_base = "/workspace/ANTPD_antspymm/data/ANTPD/"
     if os.path.exists(os.path.join(default_base, "bids/")):
         base_directory = default_base
     elif os.path.exists(os.path.join(fallback_base, "bids/")):
