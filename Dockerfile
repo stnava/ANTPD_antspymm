@@ -25,24 +25,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Upgrade pip and install Python libraries
 RUN pip install --upgrade pip \
     && pip install \
-        numpy \
-        pandas \
-        scipy \
-        matplotlib \
-        scikit-learn \
-        ipython \
-        jupyterlab \
-        antspyx==0.5.4 \
-        antspynet==0.2.9 \
-        antspymm==1.4.6 \
-        siq==0.3.4
+    numpy \
+    pandas \
+    scipy \
+    matplotlib \
+    scikit-learn \
+    ipython \
+    jupyterlab \
+    antspyx==0.5.4 \
+    antspynet==0.2.9 \
+    antspymm==1.4.6 \
+    siq==0.3.4
 
 # for downloading example data from open neuro
 RUN pip3 --no-cache-dir install --upgrade awscli
 ###########
 #
 RUN git clone https://github.com/stnava/ANTPD_antspymm.git /workspace/ANTPD_antspymm
-RUN python /workspace/ANTPD_antspymm/src/get_antsxnet_data.py /workspace/.keras
+RUN python /workspace/ANTPD_antspymm/src/get_antsxnet_data.py /root/.keras
 RUN cd /workspace/ANTPD_antspymm && bash src/download_docker.sh
 # data is in /workspace/.keras/, ~/.antspymm and bids folders
 # Default command
