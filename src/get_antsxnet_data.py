@@ -36,23 +36,35 @@ import os
 import urllib.request
 import zipfile
 
+import os
+import urllib.request
+import zipfile
+
 def download_pymm():
-    import pathlib
-    target_dir = os.path.expanduser("~/.antspymm/")
-    os.makedirs(target_dir, exist_ok=True)
+    target_dirs = [
+        os.path.expanduser("~/.antspyt1w/"),
+        os.path.expanduser("~/.antspymm/")
+    ]
+    
     figshare_urls = [
         "https://ndownloader.figshare.com/articles/14766102/versions/46",
         "https://figshare.com/ndownloader/articles/16912366/versions/25"
     ]
-    for i, url in enumerate(figshare_urls, start=1):
-        zip_filename = f"pymm_models_{i}.zip"
+
+    for url, target_dir in zip(figshare_urls, target_dirs):
+        os.makedirs(target_dir, exist_ok=True)
+        zip_filename = "pymm_models.zip"
         target_zip_path = os.path.join(target_dir, zip_filename)
+
         print(f"Downloading PyMM from {url} to {target_zip_path}")
         urllib.request.urlretrieve(url, target_zip_path)
+
         print(f"Extracting PyMM models into {target_dir}")
         with zipfile.ZipFile(target_zip_path, 'r') as zip_ref:
             zip_ref.extractall(target_dir)
+
         os.remove(target_zip_path)
+
     print("✅ PyMM models downloaded and extracted.")
 
 
