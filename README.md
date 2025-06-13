@@ -145,8 +145,7 @@ python3 src/slurm/02_job_script.py 2 # run the nth subject
 
 this will produce a single example run reproducibly.
 
-you made need to increase the memory available to your docker container for this to work.
-
+you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 48GB of memory.
 
 
 all together now
