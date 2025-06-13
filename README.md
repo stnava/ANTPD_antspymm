@@ -145,7 +145,7 @@ python3 src/slurm/02_job_script.py 2 # run the nth subject
 
 this will produce a single example run reproducibly.
 
-you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 48GB of memory.
+you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 48GB of memory.  the primary need for this amount of memory is (i believe) the dipy tensor reconstruction step.
 
 
 all together now
