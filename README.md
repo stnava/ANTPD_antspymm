@@ -148,6 +148,12 @@ this will produce a single example run reproducibly.
 you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 48GB of memory.  the primary need for this amount of memory is (i believe) the dipy tensor reconstruction step.
 
 
+![Memory usage for the example run](figs/mem_usage.png)
+
+this figure was generated with `psrecord $x --log mem.log --plot mem_usage.png --interval 1`
+
+
+
 all together now
 
 ```bash
