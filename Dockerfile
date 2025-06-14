@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Upgrade pip and install Python libraries
 RUN pip install --upgrade pip \
     && pip install \
+    psrecord \
     numpy \
     pandas \
     scipy \
@@ -33,7 +34,7 @@ RUN pip install --upgrade pip \
     jupyterlab \
     antspyx==0.5.4 \
     antspynet==0.2.9 \
-    antspymm==1.4.6 \
+    antspymm==1.5.1 \
     siq==0.3.4
 
 # for downloading example data from open neuro
