@@ -145,7 +145,7 @@ python3 src/slurm/02_job_script.py 2 # run the nth subject
 
 this will produce a single example run reproducibly.
 
-you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 24GB of memory.  the primary need for this amount of memory is in the T1w processing.
+you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 32GB of memory.  the primary need for this amount of memory is in the DTI reconstruction in `dipy`.
 
 
 ![Memory usage for the example run](figs/mem_usage.png)
