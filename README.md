@@ -147,6 +147,13 @@ this will produce a single example run reproducibly.
 
 you made need to increase the memory available to your docker container for this to work.  the example has been run successfully with 24GB of memory.  the primary need for this amount of memory is in T1w processing via deep learning.
 
+```r
+memlog=read.table('figs/mem.log',T)
+plot( ts(memlog$Real.mem ))
+max(memlog$Real.mem)
+# 21335.15
+```
+
 
 ![Memory usage for the example run](figs/mem_usage.png)
 
