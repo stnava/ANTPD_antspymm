@@ -32,7 +32,7 @@ RUN pip install --upgrade pip \
     scikit-learn \
     ipython \
     jupyterlab \
-    antspyx==0.5.5 \
+    antspyx==0.6.1 \
     antspynet==0.2.9 \
     antspymm==1.5.5 \
     siq==0.3.4
