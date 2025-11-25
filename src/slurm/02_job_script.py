@@ -37,23 +37,39 @@ if len(sys.argv) > 1:
         print("ERROR: First argument must be an integer file index.")
         sys.exit(1)
 
+# ------------------------------------------------------------
+# Resolve base_directory and rootdir
+# ------------------------------------------------------------
 if len(sys.argv) > 2:
+    # User supplied a rootdir
     rootdir = os.path.abspath(sys.argv[2])
     base_directory = os.path.dirname(os.path.dirname(rootdir))  # parent of "bids"
 else:
-    # Fall back to default paths
-    default_base = "/mnt/cluster/data/ANTPD/"
-    fallback_base = "/workspace/ANTPD_antspymm/data/ANTPD/"
-    if os.path.exists(os.path.join(default_base, "bids/")):
-        base_directory = default_base
-    elif os.path.exists(os.path.join(fallback_base, "bids/")):
-        base_directory = fallback_base
-    else:
+    # Fallbacks
+    candidates = [
+        "/mnt/cluster/data/ANTPD/",
+        "/workspace/ANTPD_antspymm/data/ANTPD/",
+        os.path.abspath("./data/ANTPD/")               # NEW local fallback
+    ]
+
+    base_directory = None
+    for candidate in candidates:
+        bids_path = os.path.join(candidate, "bids")
+        if os.path.exists(bids_path):
+            base_directory = candidate
+            break
+
+    if base_directory is None:
         print("ERROR: No valid default rootdir found. Please pass as second argument.")
         sys.exit(1)
+
     rootdir = os.path.join(base_directory, "bids/")
 
-print(f"Using rootdir: {rootdir}")
+# ------------------------------------------------------------
+# Report locations
+# ------------------------------------------------------------
+print(f"Using base_directory: {base_directory}")
+print(f"Using rootdir:        {rootdir}")
 
 # ------------------------------------------------------------------------------
 # Load normalization template
