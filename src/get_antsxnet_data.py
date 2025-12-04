@@ -267,8 +267,8 @@ Usage:
     log(" ANTsXNet Robust Downloader ")
     log("==============================\n")
 
-    download_pymm()
     download_siq_superres_models(output_dir)
+    download_pymm()
     download_antsxnet_data(output_dir, data_list_file)
     download_pretrained_networks(network_list_file)
 
