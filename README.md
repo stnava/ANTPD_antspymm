@@ -7,7 +7,7 @@ ANTsPyMM processing for ANTPD
 from within `ANTPD_antspymm`
 
 ```bash 
-python -m pip install awscli 
+python -m pip install awscli antspymm
 bash src/download.sh
 # run first subject 
 python src/slurm/02_job_script.py ./data/ANTPD/ 0
