@@ -18,8 +18,11 @@ Where root_or_bids_dir can be:
 
 from __future__ import annotations
 
-import glob
 import os
+os.environ.setdefault("MPLBACKEND", "Agg")
+import matplotlib
+matplotlib.use("Agg")
+import glob
 import sys
 from dataclasses import dataclass
 from pathlib import Path
