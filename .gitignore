@@ -1,0 +1,6 @@
+./data/*
+data/ANTPD/
+*.pyc
+.pytest_cache/
+build
+.coverage

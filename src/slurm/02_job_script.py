@@ -2,9 +2,18 @@
 """
 ANTPD Processing Script (positional args, no argparse)
 
-Usage:
-  python antpd_process.py [file_index] [optional_rootdir]
-  python antpd_process.py sub-XXXX [optional_rootdir]
+Supports BOTH calling conventions:
+
+1) selector-first (original)
+   python antpd_process.py [file_index|sub-XXXX] [root_or_bids_dir]
+
+2) rootdir-first (to match existing job wrappers)
+   python antpd_process.py [root_or_bids_dir] [file_index|sub-XXXX]
+
+Where root_or_bids_dir can be:
+  - /path/to/ANTPD              (contains bids/)
+  - /path/to/ANTPD/bids         (is bids root)
+  - /path/to/ANTPD/bids/sub-... (inside bids tree)
 """
 
 from __future__ import annotations
@@ -66,29 +75,81 @@ def set_thread_env(num_threads: int) -> None:
     os.environ.setdefault("ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS", str(num_threads))
 
 
+def _looks_like_path(s: str) -> bool:
+    """
+    Heuristic: treat as path if it exists OR contains a path separator OR starts with '.' or '~'.
+    This makes rootdir-first calls work without breaking selector-first.
+    """
+    if s.startswith(("~", ".", "/")):
+        return True
+    if "/" in s or "\\" in s:
+        return True
+    return Path(s).expanduser().exists()
+
+
+def _parse_selector(s: str) -> Tuple[Optional[int], Optional[str]]:
+    if s.startswith("sub-"):
+        return None, s
+    try:
+        return int(s), None
+    except ValueError:
+        die("Selector must be an integer file index or subject ID like sub-XXXX.", 2)
+
+
 def parse_args(argv: List[str]) -> Tuple[Optional[int], Optional[str], Optional[Path]]:
+    """
+    Returns: (fileindex, subject_id, rootdir)
+
+    Accepted forms:
+      script.py [selector] [rootdir]
+      script.py [rootdir] [selector]
+      script.py [selector]
+      script.py [rootdir]
+    """
     fileindex: Optional[int] = None
     subject_id: Optional[str] = None
     rootdir: Optional[Path] = None
 
-    if len(argv) > 1:
-        arg1 = argv[1]
-
-        if arg1.startswith("sub-"):
-            subject_id = arg1
-        else:
-            try:
-                fileindex = int(arg1)
-            except ValueError:
-                die("First argument must be an integer file index or subject ID (sub-XXXX).", 2)
-
-    if len(argv) > 2:
-        rootdir = Path(argv[2]).expanduser().resolve()
-
     if len(argv) > 3:
-        die("Too many arguments. Usage: script.py [index|sub-XXXX] [rootdir]", 2)
+        die("Too many arguments. Usage: script.py [index|sub-XXXX] [rootdir] OR script.py [rootdir] [index|sub-XXXX]", 2)
 
-    return fileindex, subject_id, rootdir
+    if len(argv) == 1:
+        return fileindex, subject_id, rootdir
+
+    if len(argv) == 2:
+        a1 = argv[1]
+        if _looks_like_path(a1):
+            rootdir = Path(a1).expanduser().resolve()
+        else:
+            fileindex, subject_id = _parse_selector(a1)
+        return fileindex, subject_id, rootdir
+
+    # len == 3
+    a1, a2 = argv[1], argv[2]
+
+    if _looks_like_path(a1) and not _looks_like_path(a2):
+        # rootdir-first
+        rootdir = Path(a1).expanduser().resolve()
+        fileindex, subject_id = _parse_selector(a2)
+        return fileindex, subject_id, rootdir
+
+    if not _looks_like_path(a1) and _looks_like_path(a2):
+        # selector-first (original)
+        fileindex, subject_id = _parse_selector(a1)
+        rootdir = Path(a2).expanduser().resolve()
+        return fileindex, subject_id, rootdir
+
+    # Ambiguous case: both look like paths OR both look like selectors
+    # Prefer: treat first as selector if it parses; else treat first as path.
+    try:
+        fileindex, subject_id = _parse_selector(a1)
+        rootdir = Path(a2).expanduser().resolve()
+        return fileindex, subject_id, rootdir
+    except SystemExit:
+        # a1 wasn't a selector; treat as rootdir
+        rootdir = Path(a1).expanduser().resolve()
+        fileindex, subject_id = _parse_selector(a2)
+        return fileindex, subject_id, rootdir
 
 
 def resolve_paths(user_rootdir: Optional[Path]) -> RunPaths:
@@ -102,7 +163,7 @@ def resolve_paths(user_rootdir: Optional[Path]) -> RunPaths:
         else:
             cur = user_rootdir
             found = None
-            for _ in range(5):
+            for _ in range(6):
                 if (cur / "bids").exists():
                     found = cur
                     break
@@ -124,7 +185,7 @@ def resolve_paths(user_rootdir: Optional[Path]) -> RunPaths:
                 bids_root = cbids
                 break
         if base is None or bids_root is None:
-            die("No valid default rootdir found. Please pass as second argument.")
+            die("No valid default rootdir found. Please pass as an argument.")
 
     outdir = base / "antpd_antspymm"
     csvoutdir = base / "studycsvs"
@@ -184,6 +245,11 @@ def find_optional_modalities(bids_root: Path, subject_id: str, subdate: str) -> 
     func_matches = sorted(func_dir.glob("*rest_bold.nii.gz")) if func_dir.exists() else []
     rsfn = pick_first_sorted(func_matches)
 
+    if len(dwi_matches) > 1:
+        info(f"Note: found {len(dwi_matches)} DWI files; using {dtfn[0]}")
+    if len(func_matches) > 1:
+        info(f"Note: found {len(func_matches)} rest BOLD files; using {rsfn[0]}")
+
     return dtfn, rsfn
 
 
@@ -202,11 +268,12 @@ def run_pipeline(paths: RunPaths, fileindex: Optional[int], subject_id: Optional
         if fileindex is None:
             fileindex = DEFAULT_FILEINDEX
         if fileindex < 0 or fileindex >= len(t1_files):
-            die(f"File index out of range: {fileindex}")
+            die(f"File index out of range: {fileindex} (found {len(t1_files)} T1w files)")
         t1fn = t1_files[fileindex]
-        info(f"Selected T1 file [{fileindex}]: {t1fn}")
+        info(f"Selected T1 file [{fileindex}/{len(t1_files)-1}]: {t1fn}")
 
     subject_id, subdate = parse_subject_session_from_t1(t1fn)
+    info(f"RUN: subject = {subject_id}, session = {subdate}")
 
     dtfn, rsfn = find_optional_modalities(paths.bids_root, subject_id, subdate)
 
@@ -237,6 +304,9 @@ def run_pipeline(paths: RunPaths, fileindex: Optional[int], subject_id: Optional
         normalization_template_output="ppmi",
         normalization_template_transform_type="antsRegistrationSyNQuickRepro[s]",
         normalization_template_spacing=[1, 1, 1],
+        srmodel_T1=None,
+        srmodel_NM=None,
+        srmodel_DTI=None,
         mysep="_",
     )
 
@@ -251,10 +321,12 @@ def main(argv: List[str]) -> None:
 
     paths = resolve_paths(user_rootdir)
     info(f"Using base_directory: {paths.base_directory}")
-    info(f"Using bids_root: {paths.bids_root}")
+    info(f"Using bids_root:       {paths.bids_root}")
+    info(f"Using outdir:          {paths.outdir}")
+    info(f"Using csvoutdir:       {paths.csvoutdir}")
+    info(f"Threads:              {num_threads} (override via ANTPD_NUM_THREADS)")
 
     template = ensure_template()
-
     run_pipeline(paths, fileindex, subject_id, template)
 
 
