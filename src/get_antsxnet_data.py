@@ -90,7 +90,7 @@ def download_pymm():
 
     figshare_urls = [
         "https://ndownloader.figshare.com/articles/14766102/versions/46",
-        "https://figshare.com/ndownloader/articles/16912366/versions/25"
+        "https://ndownloader.figshare.com/articles/16912366/versions/25"
     ]
 
     for url, target_dir in zip(figshare_urls, target_dirs):
@@ -129,7 +129,7 @@ def download_siq_superres_models(target_dir):
     import urllib.request
     import zipfile
 
-    figshare_url = "https://figshare.com/ndownloader/articles/30787214/versions/1"
+    figshare_url = "https://ndownloader.figshare.com/articles/30787214/versions/1"
     target_zip_path = os.path.join(target_dir, "siq_superres_models.zip")
 
     os.makedirs(target_dir, exist_ok=True)
