@@ -2,6 +2,17 @@
 
 ANTsPyMM processing for ANTPD
 
+## quick start
+
+from within `ANTPD_antspymm`
+
+```bash 
+python -m pip install awscli 
+bash src/download.sh
+# run first subject 
+python src/slurm/02_job_script.py ./data/ANTPD/ 0
+```
+
 this brief collection of scripts should be used as a guideline for how to 
 run ANTsPyMM on your own data. it is neither exhaustive nor perfect but 
 provides the basic idea.  it was developed for a slurm cluster - you may 
@@ -15,6 +26,8 @@ the steps to recreate the processing include:
 1.  clone this repo 
 
 2.  clone the ANTPD data via `bash src/download.sh`
+
+    * you may need ` pip install awscli `
 
     * the data comes from [this link](https://openneuro.org/datasets/ds001907/versions/3.0.2)
 
